@@ -5,11 +5,14 @@ from sklearn.neighbors import NearestNeighbors
 # now we wait for backend team to define requests
 app = Flask(__name__)
 
-class Person:
-    def __init__(self, name, age):
-        self.name = name
-        self.age = age
+DATASET_LINKS = []
+books_data = pd.read_csv('books.csv')
+music_data = pd.read_csv('music.csv')
+movies_data = pd.read_csv('movies.csv')
+podcasts_data = pd.read_csv('podcasts.csv')
 
+
+categories = ['Book', 'Music', 'Movie', 'podcast']
 data = []
 X = data
 knn = NearestNeighbors(n_neighbors=5)
