@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+import pandas as pd
 import numpy as np
 
 def get_similar_books(user_scores):
@@ -18,6 +19,13 @@ def get_similar_podcasts(user_scores):
 
 
 app = Flask(__name__)
+
+DATASET_LINKS = []
+books_data = pd.read_csv('datasets\collaborative_book_metadata.csv')
+music_data = pd.read_csv('datasets\Spotify_Youtube.csv')
+movies_data = pd.read_csv('datasets\imdb_top_1000.csv')
+podcasts_data = pd.read_json('datasets/podcast.json')
+
 categories = ['Book', 'Music', 'Movie', 'podcast']
 
 @app.route('/api/similar_items', methods=['POST'])
