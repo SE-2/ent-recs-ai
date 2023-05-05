@@ -3,19 +3,23 @@ import pandas as pd
 import numpy as np
 
 def get_similar_books(user_scores):
-    pass
+    IDs = np.random.randint(0, 91, size=20)
+    return IDs
 
 
 def get_similar_musics(user_scores):
-    pass
+    IDs = np.random.randint(0, 91, size=20)
+    return IDs
 
 
 def get_similar_movies(user_scores):
-    pass
+    IDs = np.random.randint(0, 91, size=20)
+    return IDs
 
 
 def get_similar_podcasts(user_scores):
-    pass
+    IDs = np.random.randint(0, 91, size=20)
+    return IDs
 
 
 app = Flask(__name__)
@@ -52,7 +56,7 @@ def get_similar_items():
     else:
         return jsonify({'Error': 'Invalid Category.'}), 400
 
-    return jsonify({'Recommendation': similar_items})
+    return jsonify({'Recommendation': similar_items, 'Category': json_data['category']})
 
 if __name__ == '__main__':
     app.run(debug=True)
