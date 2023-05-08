@@ -92,4 +92,5 @@ env/
 venv/
 ENV/
 env.bak/
+datasets/
 venv.bak/
