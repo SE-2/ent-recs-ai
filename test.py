@@ -14,5 +14,12 @@ class TestGetSimilarItems(unittest.TestCase):
         self.assertIn('Invalid category.', response.json()['Error'])
 
 
+    def test_missing_category(self):
+        data = {'user_scores': [0.5, 0.3, 0.8]}
+        response = requests.post(url=self.url, headers=self.headers, json=data)
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('Please provide a category.', response.json()['Error'])
+
+
 if __name__ == '__main__':
     unittest.main()
