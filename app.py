@@ -70,6 +70,13 @@ def get_similar_items():
 
     if category not in categories:
         return jsonify({'Error': 'Invalid category.'}), 400
+    
+    try:
+        user_scores = [float(score) for score in user_scores]
+        if not all(0 <= score <= 10 for score in user_scores):
+            raise ValueError
+    except ValueError:
+        return jsonify({'Error': 'Invalid user scores.'}), 400
 
     if json_data['category'] == 'Book':
         similar_items = get_similar_books(user_scores)

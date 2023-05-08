@@ -20,6 +20,13 @@ class TestGetSimilarItems(unittest.TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertIn('Please provide a category.', response.json()['Error'])
 
+    # scores must be valid and in range 0 to 10
+    def test_invalid_user_scores(self):
+        data = {'category': 'Book', 'user_scores': [0.5, 20.0, 'invalid']}
+        response = requests.post(url=self.url, headers=self.headers, json=data)
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('Invalid user scores', response.json()['Error'])
+
 
 if __name__ == '__main__':
     unittest.main()
