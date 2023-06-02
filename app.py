@@ -32,12 +32,12 @@ def get_similar_items():
     
 
     if category == 'BOOK':
+        x = {'mystery, thriller, crime':8.8, 'children':3.4, 'romance': 1.0}
         favoriteBookGenres = np.zeros(len(book_genres))
-        for genre in book_genres:
+        for i, genre in enumerate(book_genres):
             if genre in user_data['favoriteBookGenres']:
-                index = book_genres.index(genre)
-                favoriteBookGenres[index] = 10
-        similar_items = rec.get_similar_books(user_data)
+                favoriteBookGenres[i] = user_data['favoriteBookGenres'][genre]
+        similar_items = rec.get_similar_books(favoriteBookGenres)
     elif category == 'MUSIC':
         similar_items = rec.get_similar_musics(user_data)
     elif category == 'MOVIE':
@@ -50,7 +50,6 @@ def get_similar_items():
     return jsonify({'Recommendation': similar_items, 'Category': category})
 
 if __name__ == '__main__':
-    print('Books', rec.get_similar_books(np.random.uniform(0.0, 10.0, size=10)))
     print('Movies', rec.get_similar_movies({
         "favorite_actors": ["Leonardo DiCaprio", "Kate Winslet", "Tom Hanks"],
         "genres": np.random.uniform(0.0, 10.0, size=21)
