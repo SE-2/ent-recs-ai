@@ -32,14 +32,14 @@ def get_similar_items():
     
 
     if category == 'BOOK':
-        x = {'mystery, thriller, crime':8.8, 'children':3.4, 'romance': 1.0}
         favoriteBookGenres = np.zeros(len(book_genres))
         for i, genre in enumerate(book_genres):
             if genre in user_data['favoriteBookGenres']:
                 favoriteBookGenres[i] = user_data['favoriteBookGenres'][genre]
         similar_items = rec.get_similar_books(favoriteBookGenres)
     elif category == 'MUSIC':
-        similar_items = rec.get_similar_musics(user_data)
+        favoriteMusicSingers = user_data['favoriteMusicSingers']
+        similar_items = rec.get_similar_musics(list(favoriteMusicSingers.keys()))
     elif category == 'MOVIE':
         similar_items = rec.get_similar_movies(user_data)
     elif category == 'PODCAST':
@@ -54,10 +54,6 @@ if __name__ == '__main__':
         "favorite_actors": ["Leonardo DiCaprio", "Kate Winslet", "Tom Hanks"],
         "genres": np.random.uniform(0.0, 10.0, size=21)
         }))
-    print('Songs',rec. get_similar_musics({
-        "favorite_artists": ['Gorillaz', '50 Cent', 'Snoop Dogg', 'João Gomes'],
-    }))
-
     print('Podcasts', rec.get_similar_podcasts({
         "favorite_producers": ['RiotCast Network', 'BBC', 'VAULT Studios'],
         "genres": np.random.uniform(0.0, 10.0, size=20)

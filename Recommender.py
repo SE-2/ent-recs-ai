@@ -134,7 +134,7 @@ class Recommender:
     def get_similar_musics(self, user_fav_artists):
         similar_musics = []
         for index, row in self.musics_data.iterrows():
-            if row['Artist'] in user_fav_artists['favorite_artists']:
+            if row['Artist'] in user_fav_artists:
                 similar_musics.append(row)
 
         sorted_musics = sorted(similar_musics, key=lambda x: x['Likes'], reverse=True)
