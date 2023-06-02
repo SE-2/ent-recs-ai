@@ -138,8 +138,25 @@ def get_podcast_vectors(user_data):
 
 def get_similar_podcasts(favorite_producers):
     podcasts = get_podcast_vectors(favorite_producers)
+    user_favorite_genres = np.array(favorite_producers['genres'])
+    user_favorite_genres = np.insert(user_favorite_genres, 0, 10)
+    
+    n_clusters = 20
+    kmeans = KMeans(n_clusters=n_clusters)
+    kmeans.fit(podcasts)
 
-    return np.random.randint(0, 91, size=20)
+    cluster_label = kmeans.predict(user_favorite_genres.reshape(1, -1))[0]
+
+    podcast_cluster_labels = kmeans.labels_
+    podcast_ids_in_cluster = np.where(podcast_cluster_labels == cluster_label)[0]
+
+    if len(podcast_ids_in_cluster) == 0:
+        return []
+
+    recommended_podcasts = podcasts_data.iloc[podcast_ids_in_cluster, :]
+    recommended_podcasts = recommended_podcasts.sort_values(by='rating', ascending=False)
+
+    return recommended_podcasts.iloc[:20, 8].tolist()
 
 
 app = Flask(__name__)
