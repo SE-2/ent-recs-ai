@@ -23,10 +23,17 @@ def get_book_vectors():
         book_vectors.append(vector)
     return np.array(book_vectors)
 
+def get_movie_containing_actors(actors):
+    result = []
+    for index, row in movies_data.iterrows():
+        if any(actor in [row['Star1'], row['Star2'], row['Star3'], row['Star4']] for actor in actors):
+            result.append(row)
+    return pd.DataFrame(result)
 
-def get_movie_vectors():
+
+def get_movie_vectors(selected_movies):
     movie_vectors = []
-    for i in movies_data['Genre']:
+    for i in selected_movies:
         genres = i.split(', ')
         vector = [10 if g in genres else 0 for g in movie_genres]
         movie_vectors.append(vector)
@@ -55,7 +62,10 @@ def get_similar_musics(user_data):
 
 
 def get_similar_movies(user_prefs: dict):
-    books = get_movie_vectors()
+    user_favorite_genres = user_prefs['genres']
+    selected_movies = get_movie_containing_actors(user_prefs['favorite_actors'])
+    movies = get_movie_vectors(selected_movies['Genre'])
+
     return np.random.randint(0, 91, size=20)
 
 
@@ -140,8 +150,8 @@ def get_similar_items():
 
 if __name__ == '__main__':
     print(get_similar_books([4.123,5.55,8.123,1,1,1,1.123,2.123, 7.7, 8.88]))
-    # print(get_similar_movies({
-    #     "favorite_actors": ["Leonardo DiCaprio", "Kate Winslet", "Tom Hanks"],
-    #     "genres": ["Drama", "Action"]
-    #     }))
+    print(get_similar_movies({
+        "favorite_actors": ["Leonardo DiCaprio", "Kate Winslet", "Tom Hanks"],
+        "genres": ["Drama", "Action"]
+        }))
     app.run(debug=True)
