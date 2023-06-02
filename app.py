@@ -18,7 +18,7 @@ movie_genres = ['Animation', 'Sci-Fi', 'History', 'War', 'Family', 'Mystery',
 def get_book_vectors():
     book_vectors = []
     for i in books_data.values:
-        genres = ast.literal_eval(i[8])
+        genres = ast.literal_eval(i[7])
         vector = [10 if g in genres else 0 for g in book_genres]
         book_vectors.append(vector)
     return np.array(book_vectors)
@@ -62,11 +62,22 @@ def get_similar_musics(user_data):
 
 
 def get_similar_movies(user_prefs: dict):
-    user_favorite_genres = user_prefs['genres']
+    user_favorite_genres = np.array(user_prefs['genres'])
     selected_movies = get_movie_containing_actors(user_prefs['favorite_actors'])
     movies = get_movie_vectors(selected_movies['Genre'])
 
-    return np.random.randint(0, 91, size=20)
+    n_clusters = 10
+    kmeans = KMeans(n_clusters=n_clusters)
+    kmeans.fit(movies)
+
+    cluster_label = kmeans.predict(user_favorite_genres.reshape(1, -1))[0]
+    
+    movie_cluster_labels = kmeans.labels_
+    movie_ids_in_cluster = np.where(movie_cluster_labels == cluster_label)[0][:5]
+    
+    movie_ids = selected_movies.iloc[movie_ids_in_cluster, 0].tolist()
+
+    return movie_ids
 
 
 def get_similar_podcasts(data):
@@ -77,7 +88,7 @@ def get_similar_podcasts(data):
 app = Flask(__name__)
 
 DATASET_LINKS = []
-books_data = pd.read_csv('datasets\collaborative_book_metadata.csv')
+books_data = pd.read_csv('datasets/books_dataset.csv')
 # Unique Book generes (10)
 # 'young-adult'
 # 'poetry'
@@ -103,8 +114,9 @@ books_data = pd.read_csv('datasets\collaborative_book_metadata.csv')
 # print(set(setofgenres))
 # ------------------------------------------------------
 
-music_data = pd.read_csv('datasets\Spotify_Youtube.csv')
-movies_data = pd.read_csv('datasets\imdb_top_1000.csv')
+music_data = pd.read_csv('datasets\musics_dataset.csv')
+movies_data = pd.read_csv('datasets/movies_dataset.csv', encoding='ISO-8859-1')
+
 # Unique Genres (21)
 # {'Animation', 'Sci-Fi', 'History', 'War', 'Family', 'Mystery', 
 # 'Action', 'Music', 'Musical', 'Crime', 'Sport', 'Romance', 
@@ -149,9 +161,9 @@ def get_similar_items():
     return jsonify({'Recommendation': similar_items, 'Category': json_data['category']})
 
 if __name__ == '__main__':
-    print(get_similar_books([4.123,5.55,8.123,1,1,1,1.123,2.123, 7.7, 8.88]))
-    print(get_similar_movies({
+    print('Books', get_similar_books(np.random.uniform(0.0, 10.0, size=10)))
+    print('Movies', get_similar_movies({
         "favorite_actors": ["Leonardo DiCaprio", "Kate Winslet", "Tom Hanks"],
-        "genres": ["Drama", "Action"]
+        "genres": np.random.uniform(0.0, 10.0, size=21)
         }))
     app.run(debug=True)
