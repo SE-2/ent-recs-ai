@@ -2,6 +2,8 @@ from flask import Flask, request, jsonify
 import pandas as pd
 import numpy as np
 from Recommender import Recommender
+from Recommender import book_genres, movie_genres, podcast_genres
+
 
 app = Flask(__name__)
 
@@ -19,35 +21,28 @@ rec = Recommender(podcasts_data, musics_data, movies_data, books_data)
 def get_similar_items():
     json_data = request.get_json()
 
-    if not json_data or 'category' not in json_data:
+    if not json_data or 'mediaType' not in json_data:
         return jsonify({'Error': 'Please provide a category.'}), 400
     
-    category = json_data['category']
+    category = json_data['mediaType']
     user_data = json_data['user_scores']
 
     if category not in categories:
         return jsonify({'Error': 'Invalid category.'}), 400
     
 
-    if json_data['category'] == 'Book':
-        try:
-            user_data = [float(score) for score in user_data]
-            if not all(0 <= score <= 10 for score in user_data):
-                raise ValueError
-        except ValueError:
-            return jsonify({'Error': 'Invalid user scores.'}), 400
-
+    if category == 'BOOK':
         similar_items = rec.get_similar_books(user_data)
-    elif json_data['category'] == 'Music':
+    elif category == 'MUSIC':
         similar_items = rec.get_similar_musics(user_data)
-    elif json_data['category'] == 'Movie':
+    elif category == 'MOVIE':
         similar_items = rec.get_similar_movies(user_data)
-    elif json_data['category'] == 'Podcast':
+    elif category == 'PODCAST':
         similar_items = rec.get_similar_podcasts(user_data)
     else:
         return jsonify({'Error': 'Invalid Category.'}), 400
 
-    return jsonify({'Recommendation': similar_items, 'Category': json_data['category']})
+    return jsonify({'Recommendation': similar_items, 'Category': category})
 
 if __name__ == '__main__':
     print('Books', rec.get_similar_books(np.random.uniform(0.0, 10.0, size=10)))
