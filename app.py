@@ -5,6 +5,7 @@ from flask import Flask, request, jsonify
 import pandas as pd
 import numpy as np
 import ast
+import random
 
 book_genres = ['young-adult', 'poetry', 'fantasy, paranormal', 'non-fiction', 
                'mystery, thriller, crime', 'children', 'romance', 'comics, graphic', 
@@ -40,11 +41,13 @@ def get_movie_vectors(selected_movies):
     return np.array(movie_vectors)
 
 
+import random
+
 def get_similar_books(user_data:list):
     user_data = np.array(user_data)
     books = get_book_vectors()
 
-    n_clusters = 10
+    n_clusters = 8
     kmeans = KMeans(n_clusters=n_clusters)
     kmeans.fit(books)
     
@@ -55,7 +58,17 @@ def get_similar_books(user_data:list):
     
     book_titles = books_data.iloc[book_ids_in_cluster, 0].tolist()
 
+    if len(book_titles) < 5:
+        remaining_count = 5 - len(book_titles)
+        all_book_titles = books_data.iloc[:, 0].tolist()
+        for i in range(remaining_count):
+            random_title = random.choice(all_book_titles)
+            while random_title in book_titles:
+                random_title = random.choice(all_book_titles)
+            book_titles.append(random_title)
+
     return book_titles
+
 
 
 def get_similar_musics(user_data):
@@ -68,7 +81,7 @@ def get_similar_movies(user_prefs: dict):
     selected_movies = get_movie_containing_actors(user_prefs['favorite_actors'])
     movies = get_movie_vectors(selected_movies['Genre'])
 
-    n_clusters = 10
+    n_clusters = 8
     kmeans = KMeans(n_clusters=n_clusters)
     kmeans.fit(movies)
 
@@ -79,7 +92,17 @@ def get_similar_movies(user_prefs: dict):
     
     movie_ids = selected_movies.iloc[movie_ids_in_cluster, 0].tolist()
 
+    if len(movie_ids) < 5:
+        remaining_count = 5 - len(movie_ids)
+        all_movie_ids = selected_movies.iloc[:, 0].tolist()
+        for i in range(remaining_count):
+            random_id = random.choice(all_movie_ids)
+            while random_id in movie_ids:
+                random_id = random.choice(all_movie_ids)
+            movie_ids.append(random_id)
+
     return movie_ids
+
 
 
 def get_similar_podcasts(data):
