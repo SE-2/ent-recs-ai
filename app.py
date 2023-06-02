@@ -52,8 +52,10 @@ def get_similar_books(user_data:list):
     
     book_cluster_labels = kmeans.labels_
     book_ids_in_cluster = np.where(book_cluster_labels == cluster_label)[0][:5]
+    
+    book_titles = books_data.iloc[book_ids_in_cluster, 0].tolist()
 
-    return book_ids_in_cluster.tolist()
+    return book_titles
 
 
 def get_similar_musics(user_data):
