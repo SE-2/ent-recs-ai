@@ -57,9 +57,6 @@ if __name__ == '__main__':
         }))
     print('Songs',rec. get_similar_musics({
         "favorite_artists": ['Gorillaz', '50 Cent', 'Snoop Dogg', 'João Gomes'],
-        "Energy": 0.9,
-        "Duration": 220000,
-        "Instrumentalness": 0.5
     }))
 
     print('Podcasts', rec.get_similar_podcasts({

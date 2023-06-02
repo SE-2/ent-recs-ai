@@ -5,6 +5,7 @@ import numpy as np
 import ast
 import random
 
+
 book_genres = ['young-adult', 'poetry', 'fantasy, paranormal', 'non-fiction', 
                'mystery, thriller, crime', 'children', 'romance', 'comics, graphic', 
                'history, historical fiction, biography', 'fiction']
@@ -128,35 +129,13 @@ class Recommender:
         recommended_podcasts = recommended_podcasts.sort_values(by='rating', ascending=False)
 
         return recommended_podcasts.iloc[:20, 8].tolist()
-
-
-    def get_music_vectors(self, user_data):
-        vectors = []
-        for index, row in self.musics_data.iterrows():
-            vector = []
-            vector.append(10 if row['Artist'] in user_data['favorite_artists'] else -10)
-            vector.append(row['Energy'] if not np.isnan(row['Energy']) else 0)
-            vector.append(row['Duration_ms'] if not np.isnan(row['Duration_ms']) else 15000)
-            vector.append(row['Instrumentalness'] if not np.isnan(row['Instrumentalness']) else 0.2)
-            vectors.append(vector)
-        return np.array(vectors)
     
 
-    def get_similar_musics(self, user_data):
-        musics = self.get_music_vectors(user_data)
-        user_data = np.array([10, user_data['Energy'], user_data['Duration'], user_data['Instrumentalness']])
-        
-        n_clusters = 10
-        kmeans = KMeans(n_clusters=n_clusters)
-        kmeans.fit(musics)
-        
-        cluster_label = kmeans.predict(user_data.reshape(1, -1))[0]
-        
-        music_cluster_labels = kmeans.labels_
-        music_ids_in_cluster = np.where(music_cluster_labels == cluster_label)[0]
-        
-        recommended_music = self.musics_data.iloc[music_ids_in_cluster, :]
-        
-        recommended_music = recommended_music.sort_values(by='Likes', ascending=False)
-        
-        return recommended_music.iloc[:20, 0].tolist()
+    def get_similar_musics(self, user_fav_artists):
+        similar_musics = []
+        for index, row in self.musics_data.iterrows():
+            if row['Artist'] in user_fav_artists['favorite_artists']:
+                similar_musics.append(row)
+
+        sorted_musics = sorted(similar_musics, key=lambda x: x['Likes'], reverse=True)
+        return [music['ID'] for music in sorted_musics[:20]]
