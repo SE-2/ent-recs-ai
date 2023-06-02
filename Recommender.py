@@ -96,11 +96,11 @@ class Recommender:
         return recommended_movies.iloc[:20, 0].tolist()
     
 
-    def get_podcast_vectors(self, user_data):
+    def get_podcast_vectors(self, fav_producer):
         podcast_vectors = []
         for i, row in self.podcasts_data.iterrows():
             score = -10
-            if any(producer in row['producer'] for producer in user_data['favorite_producers']):
+            if any(producer in row['producer'] for producer in fav_producer):
                 score = 10
             genres = row['genre']
             vector = [10 if g == genres else 0 for g in podcast_genres]
@@ -108,9 +108,9 @@ class Recommender:
         return np.array(podcast_vectors)
 
 
-    def get_similar_podcasts(self, favorite_producers):
+    def get_similar_podcasts(self, favorite_producers, favorite_genres):
         podcasts = self.get_podcast_vectors(favorite_producers)
-        user_favorite_genres = np.array(favorite_producers['genres'])
+        user_favorite_genres = np.array(favorite_genres)
         user_favorite_genres = np.insert(user_favorite_genres, 0, 10)
         
         n_clusters = 20

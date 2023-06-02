@@ -46,21 +46,24 @@ def get_similar_items():
 
         favoriteMovieGenres = np.zeros(len(movie_genres))
         for i, genre in enumerate(movie_genres):
-            if genre in json_data['favoritemovieGenres']:
+            if genre in json_data['favoriteMovieGenres']:
                 favoriteMovieGenres[i] = json_data['favoriteMovieGenres'][genre]
 
-        similar_items = rec.get_similar_musics(list(favoriteMovieActors.keys()), favoriteMovieGenres)
+        similar_items = rec.get_similar_movies(list(favoriteMovieActors.keys()), favoriteMovieGenres)
 
     elif category == 'PODCAST':
-        similar_items = rec.get_similar_podcasts(json_data)
+        favoritePodcastProducers = json_data['favoritePodcastProducers']
+
+        favoritePodcastGenres = np.zeros(len(podcast_genres))
+        for i, genre in enumerate(podcast_genres):
+            if genre in json_data['favoritePodcastGenres']:
+                favoritePodcastGenres[i] = json_data['favoritePodcastGenres'][genre]
+
+        similar_items = rec.get_similar_podcasts(list(favoritePodcastProducers.keys()), favoritePodcastGenres)
     else:
         return jsonify({'Error': 'Invalid Category.'}), 400
 
-    return jsonify({'Recommendation': similar_items, 'Category': category})
+    return jsonify({'mediaType': category, 'recommendation': similar_items})
 
 if __name__ == '__main__':
-    print('Podcasts', rec.get_similar_podcasts({
-        "favorite_producers": ['RiotCast Network', 'BBC', 'VAULT Studios'],
-        "genres": np.random.uniform(0.0, 10.0, size=20)
-    }))
     app.run(debug=True)
