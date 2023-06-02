@@ -54,7 +54,7 @@ def get_similar_books(user_data:list):
     cluster_label = kmeans.predict(user_data.reshape(1, -1))[0]
     
     book_cluster_labels = kmeans.labels_
-    book_ids_in_cluster = np.where(book_cluster_labels == cluster_label)[0][:5]
+    book_ids_in_cluster = np.where(book_cluster_labels == cluster_label)[0]
     
     book_titles = books_data.iloc[book_ids_in_cluster, 0].tolist()
 
@@ -76,18 +76,32 @@ def get_music_vectors(user_data):
     for index, row in music_data.iterrows():
         vector = []
         vector.append(10 if row['Artist'] in user_data['favorite_artists'] else -10)
-        vector.append(row['Album'])
-        vector.append(row['Energy'])
-        vector.append(row['Duration_ms'])
-        vector.append(row['Instrumentalness'])
+        vector.append(row['Energy'] if not np.isnan(row['Energy']) else 0)
+        vector.append(row['Duration_ms'] if not np.isnan(row['Duration_ms']) else 15000)
+        vector.append(row['Instrumentalness'] if not np.isnan(row['Instrumentalness']) else 0.2)
         vectors.append(vector)
     return np.array(vectors)
 
 
-
 def get_similar_musics(user_data):
-    print(get_music_vectors(user_data))
-    return np.random.randint(0, 91, size=20)
+    musics = get_music_vectors(user_data)
+    user_data = np.array([10, user_data['Energy'], user_data['Duration'], user_data['Instrumentalness']])
+    
+    n_clusters = 10
+    kmeans = KMeans(n_clusters=n_clusters)
+    kmeans.fit(musics)
+    
+    cluster_label = kmeans.predict(user_data.reshape(1, -1))[0]
+    
+    music_cluster_labels = kmeans.labels_
+    music_ids_in_cluster = np.where(music_cluster_labels == cluster_label)[0]
+    
+    recommended_music = music_data.iloc[music_ids_in_cluster, :]
+    
+    recommended_music = recommended_music.sort_values(by='Likes', ascending=False)
+    
+    return recommended_music.iloc[:20, 0].tolist()
+
 
 
 def get_similar_movies(user_prefs: dict):
@@ -102,7 +116,7 @@ def get_similar_movies(user_prefs: dict):
     cluster_label = kmeans.predict(user_favorite_genres.reshape(1, -1))[0]
     
     movie_cluster_labels = kmeans.labels_
-    movie_ids_in_cluster = np.where(movie_cluster_labels == cluster_label)[0][:5]
+    movie_ids_in_cluster = np.where(movie_cluster_labels == cluster_label)[0]
     
     movie_ids = selected_movies.iloc[movie_ids_in_cluster, 0].tolist()
 
@@ -207,7 +221,6 @@ if __name__ == '__main__':
         }))
     print('Songs', get_similar_musics({
         "favorite_artists": ['Gorillaz', '50 Cent', 'Snoop Dogg', 'João Gomes'],
-        "Album": 0,
         "Energy": 0.9,
         "Duration": 220000,
         "Instrumentalness": 0.5
