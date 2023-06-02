@@ -25,7 +25,6 @@ def get_similar_items():
         return jsonify({'Error': 'Please provide a category.'}), 400
     
     category = json_data['mediaType']
-    user_data = json_data['user_scores']
 
     if category not in categories:
         return jsonify({'Error': 'Invalid category.'}), 400
@@ -34,26 +33,32 @@ def get_similar_items():
     if category == 'BOOK':
         favoriteBookGenres = np.zeros(len(book_genres))
         for i, genre in enumerate(book_genres):
-            if genre in user_data['favoriteBookGenres']:
-                favoriteBookGenres[i] = user_data['favoriteBookGenres'][genre]
+            if genre in json_data['favoriteBookGenres']:
+                favoriteBookGenres[i] = json_data['favoriteBookGenres'][genre]
         similar_items = rec.get_similar_books(favoriteBookGenres)
+
     elif category == 'MUSIC':
-        favoriteMusicSingers = user_data['favoriteMusicSingers']
+        favoriteMusicSingers = json_data['favoriteMusicSingers']
         similar_items = rec.get_similar_musics(list(favoriteMusicSingers.keys()))
+
     elif category == 'MOVIE':
-        similar_items = rec.get_similar_movies(user_data)
+        favoriteMovieActors = json_data['favoriteMovieActors']
+
+        favoriteMovieGenres = np.zeros(len(movie_genres))
+        for i, genre in enumerate(movie_genres):
+            if genre in json_data['favoritemovieGenres']:
+                favoriteMovieGenres[i] = json_data['favoriteMovieGenres'][genre]
+
+        similar_items = rec.get_similar_musics(list(favoriteMovieActors.keys()), favoriteMovieGenres)
+
     elif category == 'PODCAST':
-        similar_items = rec.get_similar_podcasts(user_data)
+        similar_items = rec.get_similar_podcasts(json_data)
     else:
         return jsonify({'Error': 'Invalid Category.'}), 400
 
     return jsonify({'Recommendation': similar_items, 'Category': category})
 
 if __name__ == '__main__':
-    print('Movies', rec.get_similar_movies({
-        "favorite_actors": ["Leonardo DiCaprio", "Kate Winslet", "Tom Hanks"],
-        "genres": np.random.uniform(0.0, 10.0, size=21)
-        }))
     print('Podcasts', rec.get_similar_podcasts({
         "favorite_producers": ['RiotCast Network', 'BBC', 'VAULT Studios'],
         "genres": np.random.uniform(0.0, 10.0, size=20)

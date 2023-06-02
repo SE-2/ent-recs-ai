@@ -76,10 +76,10 @@ class Recommender:
         return np.array(movie_vectors)
     
 
-    def get_similar_movies(self, user_prefs: dict):
-        user_favorite_genres = np.array(user_prefs['genres'])
+    def get_similar_movies(self, user_fav_actors, user_genres):
+        user_favorite_genres = np.array(user_genres)
         user_favorite_genres = np.insert(user_favorite_genres, 0, 10)
-        movies = self.get_movie_vectors(user_prefs['favorite_actors'])
+        movies = self.get_movie_vectors(user_fav_actors)
 
         n_clusters = 8
         kmeans = KMeans(n_clusters=n_clusters)
