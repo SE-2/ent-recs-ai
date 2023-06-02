@@ -1,6 +1,4 @@
 from sklearn.cluster import KMeans
-from flask import Flask, request, jsonify
-import pandas as pd
 import numpy as np
 import ast
 import random

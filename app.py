@@ -7,7 +7,7 @@ from Recommender import book_genres, movie_genres, podcast_genres
 
 app = Flask(__name__)
 
-categories = ['Book', 'Music', 'Movie', 'Podcast']
+categories = ['BOOK', 'MUSIC', 'MOVIE', 'PODCAST']
 books_data = pd.read_csv('datasets/books_dataset.csv')
 musics_data = pd.read_csv('datasets\musics_dataset.csv')
 movies_data = pd.read_csv('datasets/movies_dataset.csv', encoding='ISO-8859-1')
