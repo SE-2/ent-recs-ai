@@ -10,6 +10,10 @@ book_genres = ['young-adult', 'poetry', 'fantasy, paranormal', 'non-fiction',
                'mystery, thriller, crime', 'children', 'romance', 'comics, graphic', 
                'history, historical fiction, biography', 'fiction']
 
+movie_genres = ['Animation', 'Sci-Fi', 'History', 'War', 'Family', 'Mystery', 
+                'Action', 'Music', 'Musical', 'Crime', 'Sport', 'Romance', 
+                'Adventure', 'Fantasy', 'Horror', 'Biography', 'Drama', 
+                'Thriller', 'Comedy', 'Film-Noir', 'Western']
 
 def get_book_vectors():
     book_vectors = []
@@ -18,6 +22,15 @@ def get_book_vectors():
         vector = [10 if g in genres else 0 for g in book_genres]
         book_vectors.append(vector)
     return np.array(book_vectors)
+
+
+def get_movie_vectors():
+    movie_vectors = []
+    for i in movies_data['Genre']:
+        genres = i.split(', ')
+        vector = [10 if g in genres else 0 for g in movie_genres]
+        movie_vectors.append(vector)
+    return np.array(movie_vectors)
 
 
 def get_similar_books(user_data:list):
@@ -42,8 +55,8 @@ def get_similar_musics(user_data):
 
 
 def get_similar_movies(user_prefs: dict):
-    IDs = np.random.randint(0, 91, size=20)
-    return IDs
+    books = get_movie_vectors()
+    return np.random.randint(0, 91, size=20)
 
 
 def get_similar_podcasts(data):
