@@ -16,6 +16,11 @@ movie_genres = ['Animation', 'Sci-Fi', 'History', 'War', 'Family', 'Mystery',
                 'Adventure', 'Fantasy', 'Horror', 'Biography', 'Drama', 
                 'Thriller', 'Comedy', 'Film-Noir', 'Western']
 
+podcast_genres = ['Sports', 'Business', 'NA', 'Music', 'Government', 'Religion & Spirituality', 
+                'Education', 'History', 'Science', 'Health & Fitness', 'News', 'Arts', 
+                'Society & Culture', 'TV & Film', 'Comedy', 'True Crime', 
+                'Fiction', 'Leisure', 'Kids & Family', 'Technology']
+
 
 def get_book_vectors():
     book_vectors = []
@@ -119,9 +124,22 @@ def get_similar_movies(user_prefs: dict):
     return recommended_movies.iloc[:20, 0].tolist()
 
 
-def get_similar_podcasts(data):
-    IDs = np.random.randint(0, 91, size=20)
-    return IDs
+def get_podcast_vectors(user_data):
+    podcast_vectors = []
+    for i, row in podcasts_data.iterrows():
+        score = -10
+        if any(producer in row['producer'] for producer in user_data['favorite_producers']):
+            score = 10
+        genres = row['genre']
+        vector = [10 if g == genres else 0 for g in podcast_genres]
+        podcast_vectors.append([score] + vector)
+    return np.array(podcast_vectors)
+
+
+def get_similar_podcasts(favorite_producers):
+    podcasts = get_podcast_vectors(favorite_producers)
+
+    return np.random.randint(0, 91, size=20)
 
 
 app = Flask(__name__)
@@ -162,7 +180,7 @@ movies_data = pd.read_csv('datasets/movies_dataset.csv', encoding='ISO-8859-1')
 # 'Thriller', 'Comedy', 'Film-Noir', 'Western'}
 podcasts_data = pd.read_json('datasets/podcast.json')
 # Unique genres (20)
-#{'Sports', 'Business', 'NA', 'Music', 'Government', 'Religion & Spirituality', 
+# {'Sports', 'Business', 'NA', 'Music', 'Government', 'Religion & Spirituality', 
 # 'Education', 'History', 'Science', 'Health & Fitness', 'News', 'Arts', 
 # 'Society & Culture', 'TV & Film', 'Comedy', 'True Crime', 
 # 'Fiction', 'Leisure', 'Kids & Family', 'Technology'}
@@ -215,5 +233,10 @@ if __name__ == '__main__':
         "Energy": 0.9,
         "Duration": 220000,
         "Instrumentalness": 0.5
+    }))
+
+    print('Podcasts', get_similar_podcasts({
+        "favorite_producers": ['RiotCast Network', 'BBC', 'VAULT Studios'],
+        "genres": np.random.uniform(0.0, 10.0, size=20)
     }))
     app.run(debug=True)
