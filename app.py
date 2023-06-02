@@ -1,4 +1,6 @@
 from sklearn.cluster import KMeans
+from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.feature_extraction.text import CountVectorizer
 from flask import Flask, request, jsonify
 import pandas as pd
 import numpy as np
@@ -18,7 +20,7 @@ def get_book_vectors():
     return np.array(book_vectors)
 
 
-def get_similar_books(user_data):
+def get_similar_books(user_data:list):
     user_data = np.array(user_data)
     books = get_book_vectors()
 
@@ -39,12 +41,12 @@ def get_similar_musics(user_data):
     return IDs
 
 
-def get_similar_movies(user_data):
+def get_similar_movies(user_prefs: dict):
     IDs = np.random.randint(0, 91, size=20)
     return IDs
 
 
-def get_similar_podcasts(user_data):
+def get_similar_podcasts(data):
     IDs = np.random.randint(0, 91, size=20)
     return IDs
 
@@ -80,6 +82,11 @@ books_data = pd.read_csv('datasets\collaborative_book_metadata.csv')
 
 music_data = pd.read_csv('datasets\Spotify_Youtube.csv')
 movies_data = pd.read_csv('datasets\imdb_top_1000.csv')
+# Unique Genres (21)
+# {'Animation', 'Sci-Fi', 'History', 'War', 'Family', 'Mystery', 
+# 'Action', 'Music', 'Musical', 'Crime', 'Sport', 'Romance', 
+# 'Adventure', 'Fantasy', 'Horror', 'Biography', 'Drama', 
+# 'Thriller', 'Comedy', 'Film-Noir', 'Western'}
 podcasts_data = pd.read_json('datasets/podcast.json')
 
 categories = ['Book', 'Music', 'Movie', 'Podcast']
@@ -120,4 +127,8 @@ def get_similar_items():
 
 if __name__ == '__main__':
     print(get_similar_books([4.123,5.55,8.123,1,1,1,1.123,2.123, 7.7, 8.88]))
+    # print(get_similar_movies({
+    #     "favorite_actors": ["Leonardo DiCaprio", "Kate Winslet", "Tom Hanks"],
+    #     "genres": ["Drama", "Action"]
+    #     }))
     app.run(debug=True)
