@@ -18,15 +18,15 @@ def get_book_vectors():
     return np.array(book_vectors)
 
 
-def get_similar_books(user_scores):
-    user_scores = np.array(user_scores)
+def get_similar_books(user_data):
+    user_data = np.array(user_data)
     books = get_book_vectors()
 
     n_clusters = 10
     kmeans = KMeans(n_clusters=n_clusters)
     kmeans.fit(books)
     
-    cluster_label = kmeans.predict(user_scores.reshape(1, -1))[0]
+    cluster_label = kmeans.predict(user_data.reshape(1, -1))[0]
     
     book_cluster_labels = kmeans.labels_
     book_ids_in_cluster = np.where(book_cluster_labels == cluster_label)[0][:5]
@@ -34,17 +34,17 @@ def get_similar_books(user_scores):
     return book_ids_in_cluster.tolist()
 
 
-def get_similar_musics(user_scores):
+def get_similar_musics(user_data):
     IDs = np.random.randint(0, 91, size=20)
     return IDs
 
 
-def get_similar_movies(user_scores):
+def get_similar_movies(user_data):
     IDs = np.random.randint(0, 91, size=20)
     return IDs
 
 
-def get_similar_podcasts(user_scores):
+def get_similar_podcasts(user_data):
     IDs = np.random.randint(0, 91, size=20)
     return IDs
 
@@ -92,26 +92,27 @@ def get_similar_items():
         return jsonify({'Error': 'Please provide a category.'}), 400
     
     category = json_data['category']
-    user_scores = json_data['user_scores']
+    user_data = json_data['user_scores']
 
     if category not in categories:
         return jsonify({'Error': 'Invalid category.'}), 400
     
-    try:
-        user_scores = [float(score) for score in user_scores]
-        if not all(0 <= score <= 10 for score in user_scores):
-            raise ValueError
-    except ValueError:
-        return jsonify({'Error': 'Invalid user scores.'}), 400
 
     if json_data['category'] == 'Book':
-        similar_items = get_similar_books(user_scores)
+        try:
+            user_data = [float(score) for score in user_data]
+            if not all(0 <= score <= 10 for score in user_data):
+                raise ValueError
+        except ValueError:
+            return jsonify({'Error': 'Invalid user scores.'}), 400
+
+        similar_items = get_similar_books(user_data)
     elif json_data['category'] == 'Music':
-        similar_items = get_similar_musics(user_scores)
+        similar_items = get_similar_musics(user_data)
     elif json_data['category'] == 'Movie':
-        similar_items = get_similar_movies(user_scores)
+        similar_items = get_similar_movies(user_data)
     elif json_data['category'] == 'Podcast':
-        similar_items = get_similar_podcasts(user_scores)
+        similar_items = get_similar_podcasts(user_data)
     else:
         return jsonify({'Error': 'Invalid Category.'}), 400
 
