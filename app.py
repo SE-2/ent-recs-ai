@@ -26,20 +26,15 @@ def get_book_vectors():
     return np.array(book_vectors)
 
 
-def get_movie_containing_actors(actors):
-    result = []
-    for index, row in movies_data.iterrows():
-        if any(actor in [row['Star1'], row['Star2'], row['Star3'], row['Star4']] for actor in actors):
-            result.append(row)
-    return pd.DataFrame(result)
-
-
-def get_movie_vectors(selected_movies):
+def get_movie_vectors(favorite_actors):
     movie_vectors = []
-    for i in selected_movies:
-        genres = i.split(', ')
+    for i, row in movies_data.iterrows():
+        score = -10
+        if any(actor in [row['Star1'], row['Star2'], row['Star3'], row['Star4']] for actor in favorite_actors):
+            score = 10
+        genres = row['Genre'].split(', ')
         vector = [10 if g in genres else 0 for g in movie_genres]
-        movie_vectors.append(vector)
+        movie_vectors.append([score] + vector)
     return np.array(movie_vectors)
 
 
@@ -106,30 +101,22 @@ def get_similar_musics(user_data):
 
 def get_similar_movies(user_prefs: dict):
     user_favorite_genres = np.array(user_prefs['genres'])
-    selected_movies = get_movie_containing_actors(user_prefs['favorite_actors'])
-    movies = get_movie_vectors(selected_movies['Genre'])
+    user_favorite_genres = np.insert(user_favorite_genres, 0, 10)
+    movies = get_movie_vectors(user_prefs['favorite_actors'])
 
     n_clusters = 8
     kmeans = KMeans(n_clusters=n_clusters)
     kmeans.fit(movies)
 
     cluster_label = kmeans.predict(user_favorite_genres.reshape(1, -1))[0]
-    
+
     movie_cluster_labels = kmeans.labels_
     movie_ids_in_cluster = np.where(movie_cluster_labels == cluster_label)[0]
-    
-    movie_ids = selected_movies.iloc[movie_ids_in_cluster, 0].tolist()
 
-    if len(movie_ids) < 5:
-        remaining_count = 5 - len(movie_ids)
-        all_movie_ids = selected_movies.iloc[:, 0].tolist()
-        for i in range(remaining_count):
-            random_id = random.choice(all_movie_ids)
-            while random_id in movie_ids:
-                random_id = random.choice(all_movie_ids)
-            movie_ids.append(random_id)
+    recommended_movies = movies_data.iloc[movie_ids_in_cluster, :]
+    recommended_movies = recommended_movies.sort_values(by='IMDB_Rating', ascending=False)
 
-    return movie_ids
+    return recommended_movies.iloc[:20, 0].tolist()
 
 
 
