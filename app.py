@@ -70,17 +70,23 @@ def get_similar_books(user_data:list):
     return book_titles
 
 
-def get_musics_containing_artists(artist):
-    result = []
+
+def get_music_vectors(user_data):
+    vectors = []
     for index, row in music_data.iterrows():
-        if any(actor in row['Artist'] for actor in artist):
-            result.append(row)
-    return pd.DataFrame(result)
+        vector = []
+        vector.append(10 if row['Artist'] in user_data['favorite_artists'] else -10)
+        vector.append(row['Album'])
+        vector.append(row['Energy'])
+        vector.append(row['Duration_ms'])
+        vector.append(row['Instrumentalness'])
+        vectors.append(vector)
+    return np.array(vectors)
+
 
 
 def get_similar_musics(user_data):
-    selected_musics = get_musics_containing_artists(user_data['favorite_artists'])
-    print(selected_musics)
+    print(get_music_vectors(user_data))
     return np.random.randint(0, 91, size=20)
 
 
@@ -202,6 +208,8 @@ if __name__ == '__main__':
     print('Songs', get_similar_musics({
         "favorite_artists": ['Gorillaz', '50 Cent', 'Snoop Dogg', 'João Gomes'],
         "Album": 0,
-        "Energy": 0.9
+        "Energy": 0.9,
+        "Duration": 220000,
+        "Instrumentalness": 0.5
     }))
     app.run(debug=True)
