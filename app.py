@@ -119,7 +119,6 @@ def get_similar_movies(user_prefs: dict):
     return recommended_movies.iloc[:20, 0].tolist()
 
 
-
 def get_similar_podcasts(data):
     IDs = np.random.randint(0, 91, size=20)
     return IDs
@@ -156,13 +155,18 @@ books_data = pd.read_csv('datasets/books_dataset.csv')
 
 music_data = pd.read_csv('datasets\musics_dataset.csv')
 movies_data = pd.read_csv('datasets/movies_dataset.csv', encoding='ISO-8859-1')
-
 # Unique Genres (21)
 # {'Animation', 'Sci-Fi', 'History', 'War', 'Family', 'Mystery', 
 # 'Action', 'Music', 'Musical', 'Crime', 'Sport', 'Romance', 
 # 'Adventure', 'Fantasy', 'Horror', 'Biography', 'Drama', 
 # 'Thriller', 'Comedy', 'Film-Noir', 'Western'}
 podcasts_data = pd.read_json('datasets/podcast.json')
+# Unique genres (20)
+#{'Sports', 'Business', 'NA', 'Music', 'Government', 'Religion & Spirituality', 
+# 'Education', 'History', 'Science', 'Health & Fitness', 'News', 'Arts', 
+# 'Society & Culture', 'TV & Film', 'Comedy', 'True Crime', 
+# 'Fiction', 'Leisure', 'Kids & Family', 'Technology'}
+
 
 categories = ['Book', 'Music', 'Movie', 'Podcast']
 
