@@ -16,6 +16,7 @@ movie_genres = ['Animation', 'Sci-Fi', 'History', 'War', 'Family', 'Mystery',
                 'Adventure', 'Fantasy', 'Horror', 'Biography', 'Drama', 
                 'Thriller', 'Comedy', 'Film-Noir', 'Western']
 
+
 def get_book_vectors():
     book_vectors = []
     for i in books_data.values:
@@ -23,6 +24,7 @@ def get_book_vectors():
         vector = [10 if g in genres else 0 for g in book_genres]
         book_vectors.append(vector)
     return np.array(book_vectors)
+
 
 def get_movie_containing_actors(actors):
     result = []
@@ -40,8 +42,6 @@ def get_movie_vectors(selected_movies):
         movie_vectors.append(vector)
     return np.array(movie_vectors)
 
-
-import random
 
 def get_similar_books(user_data:list):
     user_data = np.array(user_data)
@@ -70,10 +70,18 @@ def get_similar_books(user_data:list):
     return book_titles
 
 
+def get_musics_containing_artists(artist):
+    result = []
+    for index, row in music_data.iterrows():
+        if any(actor in row['Artist'] for actor in artist):
+            result.append(row)
+    return pd.DataFrame(result)
+
 
 def get_similar_musics(user_data):
-    IDs = np.random.randint(0, 91, size=20)
-    return IDs
+    selected_musics = get_musics_containing_artists(user_data['favorite_artists'])
+    print(selected_musics)
+    return np.random.randint(0, 91, size=20)
 
 
 def get_similar_movies(user_prefs: dict):
@@ -191,4 +199,9 @@ if __name__ == '__main__':
         "favorite_actors": ["Leonardo DiCaprio", "Kate Winslet", "Tom Hanks"],
         "genres": np.random.uniform(0.0, 10.0, size=21)
         }))
+    print('Songs', get_similar_musics({
+        "favorite_artists": ['Gorillaz', '50 Cent', 'Snoop Dogg', 'João Gomes'],
+        "Album": 0,
+        "Energy": 0.9
+    }))
     app.run(debug=True)
