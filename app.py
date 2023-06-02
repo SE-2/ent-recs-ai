@@ -32,6 +32,11 @@ def get_similar_items():
     
 
     if category == 'BOOK':
+        favoriteBookGenres = np.zeros(len(book_genres))
+        for genre in book_genres:
+            if genre in user_data['favoriteBookGenres']:
+                index = book_genres.index(genre)
+                favoriteBookGenres[index] = 10
         similar_items = rec.get_similar_books(user_data)
     elif category == 'MUSIC':
         similar_items = rec.get_similar_musics(user_data)
