@@ -63,7 +63,8 @@ def get_similar_items():
     else:
         return jsonify({'Error': 'Invalid Category.'}), 400
 
-    return jsonify({'mediaType': category, 'recommendation': similar_items})
+    print(similar_items)
+    return similar_items
 
 if __name__ == '__main__':
     app.run(debug=True)
