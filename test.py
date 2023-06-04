@@ -3,7 +3,7 @@ import requests
 
 class TestGetSimilarItems(unittest.TestCase):
     def setUp(self):
-        self.url = 'http://localhost:5000/api/similar_items'
+        self.url = 'http://5.34.201.62/api/similar_items'
         self.headers = {'Content-Type': 'application/json'}
 
 
