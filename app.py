@@ -9,7 +9,7 @@ app = Flask(__name__)
 
 categories = ['BOOK', 'MUSIC', 'MOVIE', 'PODCAST']
 books_data = pd.read_csv('datasets/books_dataset.csv')
-musics_data = pd.read_csv('datasets\musics_dataset.csv')
+musics_data = pd.read_csv('datasets/musics_dataset.csv')
 movies_data = pd.read_csv('datasets/movies_dataset.csv', encoding='ISO-8859-1')
 podcasts_data = pd.read_json('datasets/podcast.json')
 
