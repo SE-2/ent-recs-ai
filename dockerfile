@@ -13,7 +13,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the rest of the application code into the container at /app
 COPY . .
 
-COPY datasets /app/datasets
+COPY datasets /app/
 
 # Expose port 5000 for the Flask application
 EXPOSE 5000
