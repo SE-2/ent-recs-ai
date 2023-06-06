@@ -7,6 +7,10 @@ book_genres = ['young-adult', 'poetry', 'fantasy, paranormal', 'non-fiction',
                'mystery, thriller, crime', 'children', 'romance', 'comics, graphic', 
                'history, historical fiction, biography', 'fiction']
 
+movie_genres = ['Animation', 'Sci-Fi', 'History', 'War', 'Family', 'Mystery', 
+                'Action', 'Music', 'Musical', 'Crime', 'Sport', 'Romance', 
+                'Adventure', 'Fantasy', 'Horror', 'Biography', 'Drama', 
+                'Thriller', 'Comedy', 'Film-Noir', 'Western']
 
 class TestRecommender(unittest.TestCase):
 
@@ -34,6 +38,20 @@ class TestRecommender(unittest.TestCase):
 
         # Test if the function returns at least 5 book titles
         self.assertGreaterEqual(len(book_titles), 5)
+
+
+    def test_get_movie_vectors(self):
+        favorite_actors = ['Tom Hanks', 'Julia Roberts', 'Brad Pitt']
+        movie_vectors = self.recommender.get_movie_vectors(favorite_actors)
+    
+        # Verify that the output has the correct shape
+        self.assertEqual(movie_vectors.shape, (self.movies_data.shape[0], len(movie_genres) + 1))
+
+        # Verify that the first element of each row is either 10 or -10
+        self.assertTrue(np.isin(movie_vectors[:, 0], [-10, 10]).all())
+
+        # Verify that the remaining elements of each row are either 0 or 10
+        self.assertTrue(np.isin(movie_vectors[:, 1:], [0, 10]).all())
 
     
 
