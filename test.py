@@ -43,7 +43,7 @@ class TestRecommender(unittest.TestCase):
     def test_get_movie_vectors(self):
         favorite_actors = ['Tom Hanks', 'Julia Roberts', 'Brad Pitt']
         movie_vectors = self.recommender.get_movie_vectors(favorite_actors)
-    
+
         # Verify that the output has the correct shape
         self.assertEqual(movie_vectors.shape, (self.movies_data.shape[0], len(movie_genres) + 1))
 
@@ -53,7 +53,17 @@ class TestRecommender(unittest.TestCase):
         # Verify that the remaining elements of each row are either 0 or 10
         self.assertTrue(np.isin(movie_vectors[:, 1:], [0, 10]).all())
 
-    
+
+    def test_get_similar_movies(self):
+        user_fav_actors = ['Tom Hanks', 'Leonardo DiCaprio']
+        user_genres = np.array([1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0])
+        recommended_movies = self.recommender.get_similar_movies(user_fav_actors, user_genres)
+        self.assertIsInstance(recommended_movies, list)
+        self.assertTrue(all(isinstance(title, str) for title in recommended_movies))
+
+        # Test if the function returns at least 20 movie titles
+        self.assertGreaterEqual(len(recommended_movies), 20)
+
 
 if __name__ == '__main__':
     unittest.main()
