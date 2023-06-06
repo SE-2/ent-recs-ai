@@ -76,5 +76,14 @@ class TestRecommender(unittest.TestCase):
         self.assertEqual(podcast_vectors.shape, (self.podcasts_data.shape[0], len(podcast_genres) + 1))
 
 
+    def test_get_similar_podcasts(self):
+        # Test if the function returns a list of podcast titles
+        favorite_producers = ['NPR', 'WNYC Studios']
+        favorite_genres = [1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1]
+        recommended_podcasts = self.recommender.get_similar_podcasts(favorite_producers, favorite_genres)
+        self.assertIsInstance(recommended_podcasts, list)
+        self.assertTrue(all(isinstance(title, str) for title in recommended_podcasts))
+
+
 if __name__ == '__main__':
     unittest.main()
