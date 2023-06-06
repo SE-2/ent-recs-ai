@@ -25,5 +25,17 @@ class TestRecommender(unittest.TestCase):
         # Test if the function returns a numpy array with only 0 and 10 values
         self.assertTrue(np.isin(book_vectors, [0, 10]).all())
 
+
+    def test_get_similar_books(self):
+        user_data = [0, 10, 0, 0, 0, 0, 0, 0, 0, 0]
+        book_titles = self.recommender.get_similar_books(user_data)
+        self.assertIsInstance(book_titles, list)
+        self.assertTrue(all(isinstance(title, str) for title in book_titles))
+
+        # Test if the function returns at least 5 book titles
+        self.assertGreaterEqual(len(book_titles), 5)
+
+    
+
 if __name__ == '__main__':
     unittest.main()
