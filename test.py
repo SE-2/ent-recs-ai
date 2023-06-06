@@ -12,6 +12,11 @@ movie_genres = ['Animation', 'Sci-Fi', 'History', 'War', 'Family', 'Mystery',
                 'Adventure', 'Fantasy', 'Horror', 'Biography', 'Drama', 
                 'Thriller', 'Comedy', 'Film-Noir', 'Western']
 
+podcast_genres = ['Sports', 'Business', 'NA', 'Music', 'Government', 'Religion & Spirituality', 
+                'Education', 'History', 'Science', 'Health & Fitness', 'News', 'Arts', 
+                'Society & Culture', 'TV & Film', 'Comedy', 'True Crime', 
+                'Fiction', 'Leisure', 'Kids & Family', 'Technology']
+
 class TestRecommender(unittest.TestCase):
 
     def setUp(self):
@@ -63,6 +68,12 @@ class TestRecommender(unittest.TestCase):
 
         # Test if the function returns at least 20 movie titles
         self.assertGreaterEqual(len(recommended_movies), 20)
+
+    
+    def test_get_podcast_vectors(self):
+        podcast_vectors = self.recommender.get_podcast_vectors(['NPR', 'WNYC Studios'])
+        self.assertIsInstance(podcast_vectors, np.ndarray)
+        self.assertEqual(podcast_vectors.shape, (self.podcasts_data.shape[0], len(podcast_genres) + 1))
 
 
 if __name__ == '__main__':
