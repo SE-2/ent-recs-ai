@@ -84,6 +84,14 @@ class TestRecommender(unittest.TestCase):
         self.assertIsInstance(recommended_podcasts, list)
         self.assertTrue(all(isinstance(title, str) for title in recommended_podcasts))
 
+    
+    def test_get_similar_musics(self):
+        # Test if the function returns a list of music IDs
+        user_fav_artists = ['Taylor Swift', 'Ed Sheeran']
+        similar_musics = self.recommender.get_similar_musics(user_fav_artists)
+        self.assertIsInstance(similar_musics, list)
+        self.assertTrue(all(isinstance(id, str) for id in similar_musics))
+
 
 if __name__ == '__main__':
     unittest.main()
